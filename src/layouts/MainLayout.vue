@@ -33,8 +33,24 @@
             text-color="grey-8"
             icon="search"
             unelevated
-            @click="getSearchResult"
+            @click="getProducts"
           />
+        </div>
+        <div class="q-pa-md">
+            <q-btn-toggle
+              v-model="pages"
+              push
+              glossy
+              toggle-color="teal"
+              :options="[
+                { label: '1 Pagina', value: '1' },
+                { label: '2 Paginas', value: '2' },
+                { label: '3 Paginas', value: '3' },
+                { label: '4 Paginas', value: '4' },
+              ]"
+              @click="getProducts"
+            />
+
         </div>
       </q-toolbar>
       <!-- <div>versão 1.0.0</div> -->
@@ -42,7 +58,6 @@
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
       <q-list>
         <q-item-label header> Essential Links </q-item-label>
-
         <EssentialLink
           v-for="link in essentialLinks"
           :key="link.title"
@@ -50,7 +65,6 @@
         />
       </q-list>
     </q-drawer>
-
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -58,10 +72,14 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref } from "vue";
 import { defineComponent } from "vue";
 import { fabGithub } from "@quasar/extras/fontawesome-v6";
 import EssentialLink from "components/EssentialLink.vue";
+
+import { mapActions } from "vuex";
+import { mapGetters } from "vuex";
+import { api } from "boot/axios";
 
 const linksList = [
   {
@@ -114,30 +132,42 @@ export default defineComponent({
   props: {},
 
   setup() {
-
-    let search = ref('')
-
-    function getSearchResult () {
-      console.log(search)
-    }
+    let search = ref("");
+    const pages = ref(null)
 
     return {
-      fabGithub,getSearchResult,search,
-      essentialLinks: linksList
+      fabGithub,
+      search,
+      essentialLinks: linksList,
+      pages
     };
-
   },
 
-  // data() {
-  //   return {
-  //     search:""
-  //   }
-  // },
+  computed: {
+    ...mapGetters("amazon", ["products"]),
+  },
 
-  mounted(){
-    console.log("jjjjj")
-  }
+  methods: {
+    ...mapActions("amazon", ["updateProducts"]),
 
+    getProducts() {
+      var t = this;
+      api
+        .post("/get_amazon", { q: this.search, p: this.pages })
+        .then(function (response) {
+          if (response.status == 200 && response.statusText == "OK") {
+            t.updateProducts(response.data);
+          }
+        })
+        .catch(function (error) {
+          if (error.toJSON().message == "Network Error") {
+          }
+          if (error.toJSON().message == "Request failed with status code 401") {
+          }
+        });
+    },
+
+  },
 });
 </script>
 

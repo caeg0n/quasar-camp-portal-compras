@@ -8,6 +8,14 @@
             Produtos
           </q-card-section>
           <q-separator />
+          <q-card-section class="row">
+            <div class="col-12 text-h6 full-width">
+              <div class="float-right q-mr-md">
+                Resultados : <span class="text-blue">{{products.length}}</span>
+              </div>
+            </div>
+          </q-card-section>
+        </q-card>
 
           <div v-for="(product, index) in products" :key="index">
           <q-card-section horizontal class="q-pa-none">
@@ -28,14 +36,7 @@
           </div>
 
           <q-separator></q-separator>
-          <q-card-section class="row">
-            <div class="col-12 text-h6 full-width">
-              <div class="float-right q-mr-md">
-                Resultados : <span class="text-blue">{{products.length}}</span>
-              </div>
-            </div>
-          </q-card-section>
-        </q-card>
+
       </div>
     </div>
   </q-page>
@@ -46,35 +47,20 @@ import { defineComponent } from "vue";
 import { mapActions } from "vuex";
 import { mapGetters } from "vuex";
 import { api } from "boot/axios";
-import { ref } from "vue";
 
 export default defineComponent({
   name: "IndexPage",
 
   setup() {
-    // const url = ref("https://placeimg.com/500/300/nature");
-
-    // return {
-    //   url,
-    //   refresh() {
-    //     url.value = "https://placeimg.com/500/300/nature?t=" + Math.random();
-    //   },
-    // };
+    return {}
   },
 
   data() {
-    return {
-      // products:[]
-    };
+    return {}
   },
 
   mounted() {
-    this.getProducts();
-    // if (Object.keys(this.products).length === 0) {
-    //   console.log("aaa");
-    // } else {
-
-    // }
+    this.getProducts()
   },
 
   computed: {
@@ -99,7 +85,6 @@ export default defineComponent({
         .then(function (response) {
           if (response.status == 200 && response.statusText == "OK") {
             t.updateProducts(response.data);
-            console.log(response.data)
           }
         })
         .catch(function (error) {
